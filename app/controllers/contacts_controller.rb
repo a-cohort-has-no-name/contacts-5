@@ -33,4 +33,9 @@ class ContactsController < ApplicationController
       flash[:success] = "Contact deleted."
       redirect_to "/"
     end
+
+    def all_johns
+      @johns = Contact.find_all_johns
+      render "all_johns.html.erb"
+    end
 end
