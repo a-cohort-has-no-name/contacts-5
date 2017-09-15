@@ -1,6 +1,13 @@
 class ContactsController < ApplicationController
   def index
-      @contacts = Contact.all
+      # @contacts = Contact.all
+      if current_user
+        @contacts = current_user.contacts
+        render :index
+      else
+        flash[:warning] = "You must be logged in to see this page!"
+        redirect_to "/login"
+      end
     end
 
     def show
@@ -11,7 +18,9 @@ class ContactsController < ApplicationController
     end
 
     def create
-      @contact = Contact.create(first_name: params[:first_name], last_name: params[:last_name], email: params[:email], phone: params[:phone])
+      coordinates = Geocoder.coordinates(params[:address])
+      p coordinates
+      @contact = Contact.create(first_name: params[:first_name], last_name: params[:last_name], email: params[:email], phone: params[:phone], latitude: coordinates[0], longitude: coordinates[1], user_id: current_user.id)
       flash[:success] = "Contact created."
       redirect_to "/contacts/#{@contact.id}"
     end
